@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Math Fun for My Daughter</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f8f8f8;
+      margin: 0;
+      padding: 20px;
+    }
+    #container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    h1, h2, h3 {
+      text-align: center;
+    }
+    .nav-buttons {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .nav-buttons button {
+      margin: 0 10px;
+      padding: 10px 15px;
+      font-size: 16px;
+    }
+    .section {
+      display: none;
+      margin-bottom: 20px;
+    }
+    .section.active {
+      display: block;
+    }
+    input[type="text"],
+    input[type="number"] {
+      padding: 8px;
+      font-size: 16px;
+      width: calc(100% - 20px);
+      margin: 10px 0;
+    }
+    button.action {
+      padding: 8px 12px;
+      font-size: 16px;
+      margin-right: 5px;
+    }
+    #history {
+      max-height: 150px;
+      overflow-y: auto;
+      background: #eee;
+      padding: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+    #score {
+      text-align: center;
+      font-size: 18px;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Math Fun Application</h1>
+    <div class="nav-buttons">
+      <button onclick="switchSection('quizSection')">Math Quiz</button>
+      <button onclick="switchSection('tableSection')">Math Tables</button>
+    </div>
+
+    <!-- Quiz Section -->
+    <div id="quizSection" class="section active">
+      <h2>Math Quiz</h2>
+      <div id="questionDisplay" style="text-align: center; font-size: 24px; margin: 15px 0;">
+        Press "Next Question" to begin!
+      </div>
+      <div style="text-align: center;">
+        <input type="text" id="answerInput" placeholder="Type your answer here" onkeypress="handleKeyPress(event)">
+      </div>
+      <div style="text-align: center; margin-bottom: 10px;">
+        <button class="action" onclick="checkAnswer()">Submit Answer</button>
+        <button class="action" onclick="nextQuestion()">Next Question</button>
+      </div>
+      <h3>Quiz History</h3>
+      <div id="quizHistory"></div>
+      <div id="score">Correct: 0 | Incorrect: 0</div>
+    </div>
+  </div>
+
+  <script>
+    let currentQuestion = {};
+    let quizHistory = [];
+    let correctAnswers = 0;
+    let incorrectAnswers = 0;
+
+    function switchSection(sectionId) {
+      document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(sectionId).classList.add('active');
+    }
+
+    function nextQuestion() {
+      let num1 = Math.floor(Math.random() * 20) + 1;
+      let num2 = Math.floor(Math.random() * 20) + 1;
+      let operator = Math.random() < 0.55 ? '+' : '-';
+      if (operator === '-' && num1 < num2) {
+        [num1, num2] = [num2, num1];
+      }
+      let questionText = `${num1} ${operator} ${num2}`;
+      let answer = operator === '+' ? num1 + num2 : num1 - num2;
+      currentQuestion = { question: questionText, answer: answer };
+      document.getElementById('questionDisplay').innerText = questionText;
+      document.getElementById('answerInput').value = '';
+      document.getElementById('answerInput').focus();
+    }
+
+    function checkAnswer() {
+      let userAnswer = parseInt(document.getElementById('answerInput').value, 10);
+      if (isNaN(userAnswer)) {
+        alert("Please enter a valid number.");
+        return;
+      }
+      let result = (userAnswer === currentQuestion.answer) ? 'Correct' : 'Incorrect';
+      if (result === 'Correct') {
+        correctAnswers++;
+      } else {
+        incorrectAnswers++;
+      }
+      updateScore();
+      let historyItem = `${currentQuestion.question} = ${currentQuestion.answer} | Your answer: ${userAnswer} (${result})`;
+      quizHistory.push(historyItem);
+      updateQuizHistory();
+      nextQuestion();
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        checkAnswer();
+      }
+    }
+
+    function updateQuizHistory() {
+      let historyDiv = document.getElementById('quizHistory');
+      historyDiv.innerHTML = quizHistory.map(item => `<div>${item}</div>`).join('');
+    }
+
+    function updateScore() {
+      document.getElementById('score').innerText = `Correct: ${correctAnswers} | Incorrect: ${incorrectAnswers}`;
+    }
+  </script>
+</body>
+</html>
