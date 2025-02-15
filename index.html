@@ -76,15 +76,11 @@
     <h1>Math Fun Application</h1>
     <div class="nav-buttons">
       <button onclick="switchSection('quizSection')">Math Quiz</button>
-      <button onclick="switchSection('tableSection')">Math Tables</button>
     </div>
 
-    <!-- Quiz Section -->
     <div id="quizSection" class="section active">
       <h2>Math Quiz</h2>
-      <div id="questionDisplay" style="text-align: center; font-size: 24px; margin: 15px 0;">
-        Press "Next Question" to begin!
-      </div>
+      <div id="questionDisplay" style="text-align: center; font-size: 24px; margin: 15px 0;">Press "Next Question" to begin!</div>
       <div style="text-align: center;">
         <input type="text" id="answerInput" placeholder="Type your answer here" onkeypress="handleKeyPress(event)">
       </div>
@@ -108,13 +104,6 @@
     let correctAnswers = 0;
     let incorrectAnswers = 0;
 
-    function switchSection(sectionId) {
-      document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-      });
-      document.getElementById(sectionId).classList.add('active');
-    }
-
     function nextQuestion() {
       let num1 = Math.floor(Math.random() * 20) + 1;
       let num2 = Math.floor(Math.random() * 20) + 1;
@@ -128,6 +117,30 @@
       document.getElementById('questionDisplay').innerText = questionText;
       document.getElementById('answerInput').value = '';
       document.getElementById('answerInput').focus();
+    }
+
+    function checkAnswer() {
+      let userAnswer = parseInt(document.getElementById('answerInput').value, 10);
+      if (isNaN(userAnswer)) {
+        alert("Please enter a valid number.");
+        return;
+      }
+      let result = (userAnswer === currentQuestion.answer) ? 'Correct' : 'Incorrect';
+      if (result === 'Correct') {
+        correctAnswers++;
+      } else {
+        incorrectAnswers++;
+      }
+      document.getElementById('score').innerText = `Correct: ${correctAnswers} | Incorrect: ${incorrectAnswers}`;
+      quizHistory.push(`${currentQuestion.question} = ${currentQuestion.answer} | Your answer: ${userAnswer} (${result})`);
+      document.getElementById('quizHistory').innerHTML = quizHistory.map(q => `<div>${q}</div>`).join('');
+      nextQuestion();
+    }
+
+    function handleKeyPress(event) {
+      if (event.key === 'Enter') {
+        checkAnswer();
+      }
     }
   </script>
 </body>
