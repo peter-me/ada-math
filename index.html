@@ -1,8 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Math Fun for My Daughter</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Math Fun">
+  <link rel="icon" href="icon.png">
+  <link rel="apple-touch-icon" href="icon.png">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -92,6 +99,10 @@
   </div>
 
   <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js');
+    }
+
     let currentQuestion = {};
     let quizHistory = [];
     let correctAnswers = 0;
@@ -117,40 +128,6 @@
       document.getElementById('questionDisplay').innerText = questionText;
       document.getElementById('answerInput').value = '';
       document.getElementById('answerInput').focus();
-    }
-
-    function checkAnswer() {
-      let userAnswer = parseInt(document.getElementById('answerInput').value, 10);
-      if (isNaN(userAnswer)) {
-        alert("Please enter a valid number.");
-        return;
-      }
-      let result = (userAnswer === currentQuestion.answer) ? 'Correct' : 'Incorrect';
-      if (result === 'Correct') {
-        correctAnswers++;
-      } else {
-        incorrectAnswers++;
-      }
-      updateScore();
-      let historyItem = `${currentQuestion.question} = ${currentQuestion.answer} | Your answer: ${userAnswer} (${result})`;
-      quizHistory.push(historyItem);
-      updateQuizHistory();
-      nextQuestion();
-    }
-
-    function handleKeyPress(event) {
-      if (event.key === 'Enter') {
-        checkAnswer();
-      }
-    }
-
-    function updateQuizHistory() {
-      let historyDiv = document.getElementById('quizHistory');
-      historyDiv.innerHTML = quizHistory.map(item => `<div>${item}</div>`).join('');
-    }
-
-    function updateScore() {
-      document.getElementById('score').innerText = `Correct: ${correctAnswers} | Incorrect: ${incorrectAnswers}`;
     }
   </script>
 </body>
