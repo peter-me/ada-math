@@ -80,13 +80,12 @@
 
     <div id="quizSection" class="section active">
       <h2>Math Quiz</h2>
-      <div id="questionDisplay" style="text-align: center; font-size: 24px; margin: 15px 0;">Press "Next Question" to begin!</div>
+      <div id="questionDisplay" style="text-align: center; font-size: 24px; margin: 15px 0;"></div>
       <div style="text-align: center;">
-        <input type="text" id="answerInput" placeholder="Type your answer here" onkeypress="handleKeyPress(event)">
+        <input type="number" id="answerInput" inputmode="numeric" pattern="[0-9]*" placeholder="Type your answer here" onkeypress="handleKeyPress(event)">
       </div>
       <div style="text-align: center; margin-bottom: 10px;">
-        <button class="action" onclick="checkAnswer()">Submit Answer</button>
-        <button class="action" onclick="nextQuestion()">Next Question</button>
+        <button class="action" onclick="checkAnswer()">Submit & Next</button>
       </div>
       <h3>Quiz History</h3>
       <div id="quizHistory"></div>
@@ -105,6 +104,7 @@
     let incorrectAnswers = 0;
 
     function nextQuestion() {
+      
       let num1 = Math.floor(Math.random() * 20) + 1;
       let num2 = Math.floor(Math.random() * 20) + 1;
       let operator = Math.random() < 0.55 ? '+' : '-';
@@ -115,11 +115,13 @@
       let answer = operator === '+' ? num1 + num2 : num1 - num2;
       currentQuestion = { question: questionText, answer: answer };
       document.getElementById('questionDisplay').innerText = questionText;
+      
       document.getElementById('answerInput').value = '';
       document.getElementById('answerInput').focus();
     }
 
     function checkAnswer() {
+      
       let userAnswer = parseInt(document.getElementById('answerInput').value, 10);
       if (isNaN(userAnswer)) {
         alert("Please enter a valid number.");
@@ -132,8 +134,10 @@
         incorrectAnswers++;
       }
       document.getElementById('score').innerText = `Correct: ${correctAnswers} | Incorrect: ${incorrectAnswers}`;
+      
       quizHistory.push(`${currentQuestion.question} = ${currentQuestion.answer} | Your answer: ${userAnswer} (${result})`);
       document.getElementById('quizHistory').innerHTML = quizHistory.map(q => `<div>${q}</div>`).join('');
+      
       nextQuestion();
     }
 
@@ -142,6 +146,9 @@
         checkAnswer();
       }
     }
+      document.addEventListener("DOMContentLoaded", function() {
+      nextQuestion();
+    });
   </script>
 </body>
 </html>
