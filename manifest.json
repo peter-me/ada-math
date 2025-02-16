@@ -1,6 +1,6 @@
 {
-  "name": "Math Fun",
-  "short_name": "MathGame",
+  "name": "Den Magiske Matematikapp",
+  "short_name": "Adas matematik-app",
   "icons": [
     {
       "src": "icon.png",
@@ -15,6 +15,6 @@
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#ffffff",
-  "background_color": "#ffffff"
+  "theme_color": "#ADD8E6",
+  "background_color": "#ADD8E6"
 }
