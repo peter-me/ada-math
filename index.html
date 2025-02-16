@@ -71,7 +71,7 @@
 </head>
 <body>
   <div id="container">
-    <h1>Den Magiske Matematikapp</h1>
+    <h1>Adas magiske matematik-app</h1>
     <div id="quizSection">
       <h2>Math Quiz</h2>
       <div id="questionDisplay" style="font-size: 24px; margin: 15px 0;"></div>
@@ -83,8 +83,9 @@
         <button class="action operator-toggle" onclick="toggleOperator(this, '/')">➗</button>
       </div>
       <button class="action" onclick="checkAnswer()">Submit & Next</button>
+      <button class="action" onclick="toggleHistory()">History</button>
       <h3>Quiz History</h3>
-      <div id="quizHistory"></div>
+      <div id="quizHistory" style="display: none;"></div>
       <div id="score">Correct: 0 | Incorrect: 0</div>
     </div>
   </div>
@@ -160,6 +161,10 @@
     }
 
     document.addEventListener("DOMContentLoaded", nextQuestion);
+      function toggleHistory() {
+      let historyDiv = document.getElementById('quizHistory');
+      historyDiv.style.display = historyDiv.style.display === 'none' ? 'block' : 'none';
+    }
   </script>
 </body>
 </html>
