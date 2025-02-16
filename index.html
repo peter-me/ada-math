@@ -96,6 +96,10 @@
       document.getElementById('answerInput').focus();
     }
 
+    function launchConfetti() {
+      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+    }
+
     function checkAnswer() {
       let userAnswer = parseInt(document.getElementById('answerInput').value, 10);
       if (isNaN(userAnswer)) {
@@ -106,6 +110,7 @@
       if (result === 'Correct') {
         correctAnswers++;
         document.getElementById('streak').innerText = parseInt(document.getElementById('streak').innerText) + 1;
+        launchConfetti();
       } else {
         incorrectAnswers++;
         document.getElementById('streak').innerText = 0;
@@ -117,7 +122,8 @@
       nextQuestion();
     }
 
-    document.addEventListener("DOMContentLoaded", () => nextQuestion());
+    document.addEventListener("DOMContentLoaded", nextQuestion);
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.3.1/dist/confetti.browser.min.js"></script>
 </body>
 </html>
