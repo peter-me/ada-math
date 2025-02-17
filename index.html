@@ -168,9 +168,34 @@
 
     function nextQuestion() {
       let operator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
-      let num1 = Math.floor(Math.random() * 9) + 1;
-      let num2 = Math.floor(Math.random() * 9) + 1;
-      currentQuestion = { question: `${num1} ${operator} ${num2}`, answer: eval(`${num1} ${operator} ${num2}`) };
+      let num1, num2, answer;
+      if (operator === '+') {
+        // For addition, use numbers from 0 to 100
+        num1 = Math.floor(Math.random() * 101);
+        num2 = Math.floor(Math.random() * 101);
+        answer = num1 + num2;
+      } else if (operator === '-') {
+        // Ensure positive result by making sure num1 > num2.
+        // We'll use numbers from 1 to 100 for subtraction as well.
+        num1 = Math.floor(Math.random() * 100) + 1; // 1 to 100
+        num2 = Math.floor(Math.random() * num1);      // 0 to num1-1
+        // If num2 equals num1, subtract 1 to avoid zero difference (optional)
+        if(num2 === num1) num2 = num1 - 1;
+        answer = num1 - num2;
+      } else if (operator === '*') {
+        // Keep multiplication as before, with numbers from 1 to 9
+        num1 = Math.floor(Math.random() * 9) + 1;
+        num2 = Math.floor(Math.random() * 9) + 1;
+        answer = num1 * num2;
+      } else if (operator === '/') {
+        // Ensure division results in a positive integer.
+        // Using numbers from 1 to 9 for divisor and quotient.
+        num2 = Math.floor(Math.random() * 9) + 1; // divisor from 1 to 9
+        let quotient = Math.floor(Math.random() * 9) + 1; // quotient from 1 to 9
+        num1 = num2 * quotient; // dividend
+        answer = quotient;
+      }
+      currentQuestion = { question: `${num1} ${operator} ${num2}`, answer: answer };
       document.getElementById('questionDisplay').innerText = currentQuestion.question;
       document.getElementById('answerInput').value = '';
       document.getElementById('answerInput').focus();
