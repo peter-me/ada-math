@@ -175,13 +175,15 @@
         num2 = Math.floor(Math.random() * 101);
         answer = num1 + num2;
       } else if (operator === '-') {
-        // For subtraction, both numbers will be below 20.
-        // num1 is chosen from 1 to 20, and num2 is chosen from 0 to num1 - 1.
-        num1 = Math.floor(Math.random() * 20) + 1;
-        num2 = Math.floor(Math.random() * num1);  // ensures num2 < num1
+        // Ensure positive result by making sure num1 > num2.
+        // We'll use numbers from 1 to 100 for subtraction as well.
+        num1 = Math.floor(Math.random() * 100) + 1; // 1 to 100
+        num2 = Math.floor(Math.random() * num1);      // 0 to num1-1
+        // If num2 equals num1, subtract 1 to avoid zero difference (optional)
+        if(num2 === num1) num2 = num1 - 1;
         answer = num1 - num2;
       } else if (operator === '*') {
-        // Keep multiplication as before, with numbers from 1 to 9.
+        // Keep multiplication as before, with numbers from 1 to 9
         num1 = Math.floor(Math.random() * 9) + 1;
         num2 = Math.floor(Math.random() * 9) + 1;
         answer = num1 * num2;
@@ -209,4 +211,102 @@
       if (result === 'Correct') {
         correctAnswers++;
         document.getElementById('streak').innerText = parseInt(document.getElementById('streak').innerText) + 1;
-        confetti({ particleCou
+        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      } else {
+        incorrectAnswers++;
+        document.getElementById('streak').innerText = 0;
+      }
+      document.getElementById('correctCount').innerText = correctAnswers;
+      document.getElementById('incorrectCount').innerText = incorrectAnswers;
+      quizHistory.push(`${currentQuestion.question} = ${currentQuestion.answer} | Your answer: ${userAnswer} (${result})`);
+      document.getElementById('quizHistory').innerHTML = quizHistory.map(q => `<div>${q}</div>`).join('');
+      nextQuestion();
+    }
+
+    function toggleHistory() {
+      const historyElem = document.getElementById('quizHistory');
+      const headerElem = document.getElementById('quizHistoryHeader');
+      if (historyElem.style.display === 'none') {
+        historyElem.style.display = 'block';
+        headerElem.style.display = 'block';
+      } else {
+        historyElem.style.display = 'none';
+        headerElem.style.display = 'none';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", nextQuestion);
+
+    //////////////////////////
+    // Blackboard Drawing Code
+    //////////////////////////
+    const canvas = document.getElementById('blackboardCanvas');
+    // Set canvas internal resolution to match the CSS size
+    canvas.width = 300;
+    canvas.height = 400;
+    const ctx = canvas.getContext('2d');
+    let drawing = false;
+
+    // Helper to get mouse/touch position relative to canvas
+    function getPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
+    }
+
+    function startDrawing(e) {
+      e.preventDefault();
+      drawing = true;
+      const pos = getPos(e);
+      ctx.beginPath();
+      ctx.moveTo(pos.x, pos.y);
+    }
+
+    function draw(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      const pos = getPos(e);
+      ctx.lineTo(pos.x, pos.y);
+      ctx.strokeStyle = "white";
+      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.stroke();
+    }
+
+    function stopDrawing(e) {
+      if (!drawing) return;
+      e.preventDefault();
+      drawing = false;
+      ctx.closePath();
+    }
+
+    // Use pointer events for better cross-device support
+    canvas.addEventListener('pointerdown', startDrawing);
+    canvas.addEventListener('pointermove', draw);
+    canvas.addEventListener('pointerup', stopDrawing);
+    canvas.addEventListener('pointerout', stopDrawing);
+
+    function clearBlackboard() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    //////////////////////////
+    // Service Worker Registration for PWA Offline Support
+    //////////////////////////
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('service-worker.js')
+          .then(function(registration) {
+            console.log('Service Worker registered with scope:', registration.scope);
+          })
+          .catch(function(error) {
+            console.log('Service Worker registration failed:', error);
+          });
+      });
+    }
+  </script>
+</body>
+</html>
