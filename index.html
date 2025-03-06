@@ -169,33 +169,32 @@
     function nextQuestion() {
       let operator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
       let num1, num2, answer;
+      
       if (operator === '+') {
         // For addition, use numbers from 0 to 100
         num1 = Math.floor(Math.random() * 101);
         num2 = Math.floor(Math.random() * 101);
         answer = num1 + num2;
       } else if (operator === '-') {
-        // Ensure positive result by making sure num1 > num2.
-        // We'll use numbers from 1 to 100 for subtraction as well.
-        num1 = Math.floor(Math.random() * 100) + 1; // 1 to 100
+        // For subtraction, both numbers will be below 20.
+        num1 = Math.floor(Math.random() * 20) + 1;  // 1 to 20
         num2 = Math.floor(Math.random() * num1);      // 0 to num1-1
-        // If num2 equals num1, subtract 1 to avoid zero difference (optional)
-        if(num2 === num1) num2 = num1 - 1;
         answer = num1 - num2;
       } else if (operator === '*') {
-        // Keep multiplication as before, with numbers from 1 to 9
+        // Multiplication: numbers from 1 to 9
         num1 = Math.floor(Math.random() * 9) + 1;
         num2 = Math.floor(Math.random() * 9) + 1;
         answer = num1 * num2;
       } else if (operator === '/') {
-        // Ensure division results in a positive integer.
-        // Using numbers from 1 to 9 for divisor and quotient.
-        num2 = Math.floor(Math.random() * 9) + 1; // divisor from 1 to 9
-        let quotient = Math.floor(Math.random() * 9) + 1; // quotient from 1 to 9
-        num1 = num2 * quotient; // dividend
+        // Division: ensure a positive integer answer
+        num2 = Math.floor(Math.random() * 9) + 1;
+        let quotient = Math.floor(Math.random() * 9) + 1;
+        num1 = num2 * quotient;
         answer = quotient;
       }
+      
       currentQuestion = { question: `${num1} ${operator} ${num2}`, answer: answer };
+      console.log("Generated question:", currentQuestion);
       document.getElementById('questionDisplay').innerText = currentQuestion.question;
       document.getElementById('answerInput').value = '';
       document.getElementById('answerInput').focus();
@@ -235,25 +234,23 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", nextQuestion);
+    document.addEventListener("DOMContentLoaded", function() {
+      console.log("DOM fully loaded and parsed. Calling nextQuestion().");
+      nextQuestion();
+    });
 
     //////////////////////////
     // Blackboard Drawing Code
     //////////////////////////
     const canvas = document.getElementById('blackboardCanvas');
-    // Set canvas internal resolution to match the CSS size
     canvas.width = 300;
     canvas.height = 400;
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
-    // Helper to get mouse/touch position relative to canvas
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
-      return {
-        x: e.clientX - rect.left,
-        y: e.clientY - rect.top
-      };
+      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
     }
 
     function startDrawing(e) {
@@ -283,7 +280,6 @@
       ctx.closePath();
     }
 
-    // Use pointer events for better cross-device support
     canvas.addEventListener('pointerdown', startDrawing);
     canvas.addEventListener('pointermove', draw);
     canvas.addEventListener('pointerup', stopDrawing);
@@ -296,6 +292,7 @@
     //////////////////////////
     // Service Worker Registration for PWA Offline Support
     //////////////////////////
+    // For debugging, you might consider commenting out the service worker registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('service-worker.js')
