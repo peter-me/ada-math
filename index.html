@@ -21,7 +21,8 @@
       padding: 20px;
       display: flex;
       flex-direction: column;
-      align-items: center;
+      height: 100vh;
+      box-sizing: border-box;
     }
     /* Award Banner at the top */
     #awardBanner {
@@ -44,28 +45,37 @@
       flex-direction: row;
       gap: 20px;
       justify-content: center;
-      align-items: flex-start;
+      align-items: stretch;
       width: 100%;
       max-width: 800px;
+      flex: 1;
     }
-    /* Quiz container */
+    /* Quiz container remains fixed */
     #container {
-      max-width: 400px;
+      width: 400px;
       background: white;
       padding: 20px;
       border-radius: 20px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.1);
       text-align: center;
+      box-sizing: border-box;
     }
-    /* Blackboard container */
+    /* Blackboard container takes maximum available space */
     #blackboardContainer {
+      flex: 1;
       background: black;
       border-radius: 10px;
       padding: 10px;
+      display: flex;
+      flex-direction: column;
+      box-sizing: border-box;
     }
+    /* The canvas fills the container */
     #blackboardCanvas {
-      width: 300px;
-      height: 400px;
+      flex: 1;
+      display: block;
+      width: 100%;
+      height: 100%;
       background: black;
       border: 2px solid white;
       touch-action: none; /* Prevent scrolling when drawing */
@@ -169,32 +179,25 @@
     function nextQuestion() {
       let operator = selectedOperators[Math.floor(Math.random() * selectedOperators.length)];
       let num1, num2, answer;
-      
       if (operator === '+') {
-        // For addition, use numbers from 0 to 100
         num1 = Math.floor(Math.random() * 101);
         num2 = Math.floor(Math.random() * 101);
         answer = num1 + num2;
       } else if (operator === '-') {
-        // For subtraction, both numbers will be below 20.
-        num1 = Math.floor(Math.random() * 20) + 1;  // 1 to 20
-        num2 = Math.floor(Math.random() * num1);      // 0 to num1-1
+        num1 = Math.floor(Math.random() * 20) + 1;
+        num2 = Math.floor(Math.random() * num1);
         answer = num1 - num2;
       } else if (operator === '*') {
-        // Multiplication: numbers from 1 to 9
         num1 = Math.floor(Math.random() * 9) + 1;
         num2 = Math.floor(Math.random() * 9) + 1;
         answer = num1 * num2;
       } else if (operator === '/') {
-        // Division: ensure a positive integer answer
         num2 = Math.floor(Math.random() * 9) + 1;
         let quotient = Math.floor(Math.random() * 9) + 1;
         num1 = num2 * quotient;
         answer = quotient;
       }
-      
       currentQuestion = { question: `${num1} ${operator} ${num2}`, answer: answer };
-      console.log("Generated question:", currentQuestion);
       document.getElementById('questionDisplay').innerText = currentQuestion.question;
       document.getElementById('answerInput').value = '';
       document.getElementById('answerInput').focus();
@@ -234,23 +237,29 @@
       }
     }
 
-    document.addEventListener("DOMContentLoaded", function() {
-      console.log("DOM fully loaded and parsed. Calling nextQuestion().");
-      nextQuestion();
-    });
+    document.addEventListener("DOMContentLoaded", nextQuestion);
 
     //////////////////////////
     // Blackboard Drawing Code
     //////////////////////////
     const canvas = document.getElementById('blackboardCanvas');
-    canvas.width = 300;
-    canvas.height = 400;
     const ctx = canvas.getContext('2d');
     let drawing = false;
 
+    // Adjust the canvas internal resolution to match its displayed size
+    function resizeCanvas() {
+      canvas.width = canvas.offsetWidth;
+      canvas.height = canvas.offsetHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
     function getPos(e) {
       const rect = canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
+      return {
+        x: e.clientX - rect.left,
+        y: e.clientY - rect.top
+      };
     }
 
     function startDrawing(e) {
@@ -292,7 +301,6 @@
     //////////////////////////
     // Service Worker Registration for PWA Offline Support
     //////////////////////////
-    // For debugging, you might consider commenting out the service worker registration
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', function() {
         navigator.serviceWorker.register('service-worker.js')
